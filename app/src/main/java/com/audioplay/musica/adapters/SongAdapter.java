@@ -20,9 +20,9 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
-    Context context;
-    List<Song> songs;
-    OnMoreButtonClickListener onMoreButtonClickListener;
+    private Context context;
+    private List<Song> songs;
+    private OnMoreButtonClickListener onMoreButtonClickListener;
 
     public SongAdapter(Context context, List<Song> songs) {
         this.context = context;

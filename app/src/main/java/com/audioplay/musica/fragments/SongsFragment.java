@@ -85,21 +85,21 @@ public class SongsFragment extends Fragment {
     private void getSongs() {
         ContentResolver musicResolver = getActivity().getContentResolver();
         Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor cusor = musicResolver.query(musicUri, null, null, null, null);
+        Cursor cursor = musicResolver.query(musicUri, null, null, null, null);
 
-        if (cusor != null && cusor.moveToFirst()){
-            while (cusor.moveToNext()){
+        if (cursor != null && cursor.moveToFirst()){
+            while (cursor.moveToNext()){
 
-                long songId = cusor.getLong(cusor.getColumnIndex(MediaStore.Audio.Media._ID));
-                String title = cusor.getString(cusor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String artist = cusor.getString(cusor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String album = cusor.getString(cusor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                long songId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
                 songs.add(new Song(songId, title, artist, album));
             }
         }
 
-        cusor.close();
+        cursor.close();
     }
 
 }
