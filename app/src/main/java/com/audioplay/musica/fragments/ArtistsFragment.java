@@ -2,7 +2,10 @@ package com.audioplay.musica.fragments;
 
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +23,7 @@ import com.audioplay.musica.adapters.ArtistAdapter;
 import com.audioplay.musica.models.Artist;
 import com.audioplay.musica.models.Song;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,9 +75,11 @@ public class ArtistsFragment extends Fragment {
                 artists.add(new Artist(id, numberOfTracks, artistName));
 
             }
+
+            cursor.close();
         }
 
-        cursor.close();
+
     }
 
     private void prepareArtistsData() {
