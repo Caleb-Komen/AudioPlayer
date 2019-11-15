@@ -41,7 +41,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         holder.albumName.setText(album.getAlbumName());
         holder.numberOfTracks.setText(String.valueOf(album.getNumberOfTracks()));
         Glide.with(context)
-                .load(R.drawable.musica)
+                .load(album.getBitmap())
                 .into(holder.coverArt);
 
     }

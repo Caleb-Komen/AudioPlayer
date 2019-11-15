@@ -2,7 +2,10 @@ package com.audioplay.musica.fragments;
 
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,6 +22,7 @@ import com.audioplay.musica.R;
 import com.audioplay.musica.adapters.AlbumAdapter;
 import com.audioplay.musica.models.Album;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
