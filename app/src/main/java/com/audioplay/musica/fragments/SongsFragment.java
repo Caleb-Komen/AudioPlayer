@@ -1,7 +1,10 @@
 package com.audioplay.musica.fragments;
 
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,15 +14,16 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.audioplay.musica.services.MusicService;
+import com.audioplay.musica.services.MusicService.MusicBinder;
 import com.audioplay.musica.R;
 import com.audioplay.musica.adapters.SongAdapter;
 import com.audioplay.musica.models.Song;
@@ -33,6 +37,9 @@ import java.util.List;
 public class SongsFragment extends Fragment {
 
     private List<Song> songs = new ArrayList<>();
+    private boolean isBound = false;
+    private MusicService musicService;
+    private Intent playbackIntent;
 
     public SongsFragment() {
         // Required empty public constructor
@@ -54,7 +61,7 @@ public class SongsFragment extends Fragment {
         recyclerViewSongs.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         recyclerViewSongs.setAdapter(songAdapter);
 
-        songAdapter.SetOnMoreButtonClickListener(new SongAdapter.OnMoreButtonClickListener() {
+        songAdapter.setOnMoreButtonClickListener(new SongAdapter.OnMoreButtonClickListener() {
             @Override
             public void onMoreButtonClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()){
@@ -77,6 +84,14 @@ public class SongsFragment extends Fragment {
                         Toast.makeText(getActivity(), "Share", Toast.LENGTH_SHORT).show();
                         break;
                 }
+            }
+        });
+
+        songAdapter.setOnRecyclerListClickListener(new SongAdapter.OnRecyclerListClickListener() {
+            @Override
+            public void onRecyclerListClick(int position) {
+                musicService.setCurrentSong(position);
+                musicService.playSong();
             }
         });
         return view;
@@ -102,4 +117,36 @@ public class SongsFragment extends Fragment {
         cursor.close();
     }
 
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MusicBinder musicBinder = (MusicBinder) iBinder;
+            musicService = musicBinder.getService();
+            musicService.setSongsList(songs);
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            isBound = false;
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (playbackIntent == null) {
+            playbackIntent = new Intent(getActivity(), MusicService.class);
+            getActivity().bindService(playbackIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
+            getActivity().startService(playbackIntent);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        getActivity().stopService(playbackIntent);
+        musicService = null;
+        super.onDestroy();
+    }
 }

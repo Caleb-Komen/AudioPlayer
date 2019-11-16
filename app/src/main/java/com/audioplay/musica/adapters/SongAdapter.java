@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.audioplay.musica.R;
 import com.audioplay.musica.models.Song;
+import com.audioplay.musica.services.MusicService;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     private Context context;
     private List<Song> songs;
     private OnMoreButtonClickListener onMoreButtonClickListener;
+    private OnRecyclerListClickListener onRecyclerListClickListener;
 
     public SongAdapter(Context context, List<Song> songs) {
         this.context = context;
@@ -33,8 +35,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         void onMoreButtonClick(MenuItem menuItem);
     }
 
-    public void SetOnMoreButtonClickListener(OnMoreButtonClickListener onMoreButtonClickListener){
+    public void setOnMoreButtonClickListener(OnMoreButtonClickListener onMoreButtonClickListener){
         this.onMoreButtonClickListener = onMoreButtonClickListener;
+    }
+
+    public interface OnRecyclerListClickListener{
+        void onRecyclerListClick(int position);
+    }
+
+    public void setOnRecyclerListClickListener (OnRecyclerListClickListener onRecyclerListClickListener){
+        this.onRecyclerListClickListener = onRecyclerListClickListener;
     }
 
     @NonNull
@@ -69,6 +79,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             buttonMore = itemView.findViewById(R.id.btn_more);
 
             buttonMore.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -76,6 +87,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
             if (view.getId() == R.id.btn_more){
                 displayPopupMenu(view);
+            }else {
+                int position = getAdapterPosition();
+                onRecyclerListClickListener.onRecyclerListClick(position);
             }
         }
     }

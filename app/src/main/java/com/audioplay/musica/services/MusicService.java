@@ -1,15 +1,19 @@
-package com.audioplay.musica;
+package com.audioplay.musica.services;
 
 import android.app.Service;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.provider.MediaStore;
 
 import com.audioplay.musica.models.Song;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener,
@@ -17,7 +21,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     private MediaPlayer mediaPlayer;
     private List<Song> songs;
-    private int songCurrentPosition;
+    private int songPosition;
     public MusicService() {
     }
 
@@ -26,14 +30,16 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public class MusicBinder extends Binder{
-        MusicService getService(){
+        public MusicService getService(){
             return MusicService.this;
         }
     }
+
+    private final IBinder iBinder = new MusicBinder();
     @Override
     public void onCreate() {
         super.onCreate();
-        songCurrentPosition = 0;
+        songPosition = 0;
         mediaPlayer = new MediaPlayer();
 
         initMusicPlayer();
@@ -51,8 +57,35 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return iBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        return false;
+    }
+
+    public void playSong(){
+        mediaPlayer.reset();
+        Song song = songs.get(songPosition);
+        long songId = song.getId();
+
+        //get uri as the data source
+        Uri songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId);
+
+        try {
+            mediaPlayer.setDataSource(getApplicationContext(), songUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mediaPlayer.prepareAsync();
+    }
+
+    public void setCurrentSong(int position){
+        songPosition = position;
     }
 
     @Override
@@ -67,6 +100,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-
+        //start playback
+        mediaPlayer.start();
     }
 }

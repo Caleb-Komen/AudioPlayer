@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".MusicService"
+            android:name=".services.MusicService"
             android:enabled="true"
             android:exported="false"></service>
 
