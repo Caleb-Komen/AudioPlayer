@@ -40,9 +40,16 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
 
         holder.albumName.setText(album.getAlbumName());
         holder.numberOfTracks.setText(String.valueOf(album.getNumberOfTracks()));
-        Glide.with(context)
-                .load(album.getBitmap())
-                .into(holder.coverArt);
+
+        if (album.getBitmap() != null) {
+            Glide.with(context)
+                    .load(album.getBitmap())
+                    .into(holder.coverArt);
+        }else {
+            Glide.with(context)
+                    .load(R.drawable.ic_headset)
+                    .into(holder.coverArt);
+        }
 
     }
 

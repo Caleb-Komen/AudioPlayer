@@ -103,7 +103,7 @@ public class SongsFragment extends Fragment {
         Cursor cursor = musicResolver.query(musicUri, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()){
-            while (cursor.moveToNext()){
+            do {
 
                 long songId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
@@ -111,7 +111,7 @@ public class SongsFragment extends Fragment {
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
                 songs.add(new Song(songId, title, artist, album));
-            }
+            } while (cursor.moveToNext());
         }
 
         cursor.close();

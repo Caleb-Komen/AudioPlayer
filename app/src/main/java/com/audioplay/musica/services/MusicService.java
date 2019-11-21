@@ -84,6 +84,16 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mediaPlayer.prepareAsync();
     }
 
+    public void pause(){
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
+    }
+
+    public void continuePlaying(){
+        mediaPlayer.prepareAsync();
+    }
+
     public void setCurrentSong(int position){
         songPosition = position;
     }

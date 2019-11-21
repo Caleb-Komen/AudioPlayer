@@ -66,7 +66,7 @@ public class ArtistsFragment extends Fragment {
         Cursor cursor = musicResolver.query(artistsUri, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()){
-            while (cursor.moveToNext()){
+            do {
 
                 long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Artists._ID));
                 int numberOfTracks = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS));
@@ -74,7 +74,7 @@ public class ArtistsFragment extends Fragment {
 
                 artists.add(new Artist(id, numberOfTracks, artistName));
 
-            }
+            } while (cursor.moveToNext());
 
             cursor.close();
         }

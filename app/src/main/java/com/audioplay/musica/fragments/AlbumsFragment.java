@@ -23,6 +23,7 @@ import com.audioplay.musica.adapters.AlbumAdapter;
 import com.audioplay.musica.models.Album;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,15 +62,26 @@ public class AlbumsFragment extends Fragment {
         Uri albumsUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
         Cursor cursor = musicResolver.query(albumsUri, null, null, null, null);
 
+        Uri coverArtUri = Uri.parse("content://media/external/audio/albumart");
         if (cursor != null && cursor.moveToFirst()){
-            while (cursor.moveToNext()){
+            do {
                 long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                 int numberOfTracks = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS));
                 String albumName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
 
-                albums.add(new Album(id, numberOfTracks, albumName));
+                Uri uri = ContentUris.withAppendedId(coverArtUri, id);
+                Bitmap coverArt = null;
+                try {
+                    InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
+                    coverArt = BitmapFactory.decodeStream(inputStream);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
-            }
+                albums.add(new Album(id, numberOfTracks, albumName, coverArt));
+
+            } while (cursor.moveToNext());
+
             cursor.close();
         }
     }

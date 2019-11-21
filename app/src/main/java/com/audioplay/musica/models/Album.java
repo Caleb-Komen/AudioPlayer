@@ -3,11 +3,11 @@ package com.audioplay.musica.models;
 import android.graphics.Bitmap;
 
 public class Album {
-    long id;
-    int numberOfTracks;
-    String albumName;
+    private long id;
+    private int numberOfTracks;
+    private String albumName;
 
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     public Album(long id, int numberOfTracks, String albumName) {
         this.id = id;
