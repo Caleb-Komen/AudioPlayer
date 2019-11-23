@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/appbar">
+        android:id="@+id/app_bar">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -36,5 +36,7 @@
         android:id="@+id/view_pager"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
+    <include
+        layout="@layout/activity_now_playing"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

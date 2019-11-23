@@ -12,6 +12,7 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 
 import com.audioplay.musica.models.Song;
+import com.chibde.visualizer.CircleBarVisualizer;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,11 +23,15 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private MediaPlayer mediaPlayer;
     private List<Song> songs;
     private int songPosition;
+    private CircleBarVisualizer circleBarVisualizer;
     public MusicService() {
     }
 
     public void setSongsList(List<Song> songs){
         this.songs = songs;
+    }
+    public void setCircleBarVisualizer(CircleBarVisualizer circleBarVisualizer){
+        this.circleBarVisualizer = circleBarVisualizer;
     }
 
     public class MusicBinder extends Binder{
@@ -112,5 +117,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onPrepared(MediaPlayer mediaPlayer) {
         //start playback
         mediaPlayer.start();
+        circleBarVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
     }
 }

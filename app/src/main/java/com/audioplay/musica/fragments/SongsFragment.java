@@ -9,12 +9,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.audioplay.musica.BuildConfig;
 import com.audioplay.musica.services.MusicService;
 import com.audioplay.musica.services.MusicService.MusicBinder;
 import com.audioplay.musica.R;
@@ -34,7 +41,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SongsFragment extends Fragment {
+public class SongsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private List<Song> songs = new ArrayList<>();
     private boolean isBound = false;
@@ -45,6 +52,15 @@ public class SongsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public void enableStrictMode(){
+        if (BuildConfig.DEBUG){
+            StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build();
+            StrictMode.setThreadPolicy(threadPolicy);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +70,8 @@ public class SongsFragment extends Fragment {
         RecyclerView recyclerViewSongs = view.findViewById(R.id.songs_list);
 
         getSongs();
+
+        enableStrictMode();
 
         SongAdapter songAdapter = new SongAdapter(getActivity(), songs);
         recyclerViewSongs.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -148,5 +166,21 @@ public class SongsFragment extends Fragment {
         getActivity().stopService(playbackIntent);
         musicService = null;
         super.onDestroy();
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+
     }
 }
