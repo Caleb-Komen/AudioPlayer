@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/bottom_sheet"
     android:fitsSystemWindows="true"
     app:behavior_hideable="false"
     app:behavior_peekHeight="?attr/actionBarSize"
@@ -24,46 +23,46 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="400dp"
+        android:gravity="center">
 
         <com.chibde.visualizer.CircleBarVisualizer
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="308dp"
+            android:layout_height="308dp"
             android:id="@+id/visualizer"
             android:layout_centerInParent="true"/>
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:gravity="center"
             android:orientation="vertical" >
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
                 android:src="@drawable/musica"
-                android:layout_marginTop="100dp"
-                app:civ_border_color="@android:color/white"
+                app:civ_border_color="@android:color/holo_blue_bright"
                 app:civ_border_width="2dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
-                android:text="Wonderful World"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@android:color/white" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginTop="40dp"-->
+<!--                android:text="Wonderful World"-->
+<!--                android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+<!--                android:textColor="@android:color/white" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text="Wonderful World"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@android:color/white" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginTop="10dp"-->
+<!--                android:text="Wonderful World"-->
+<!--                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"-->
+<!--                android:textColor="@android:color/white" />-->
 
         </LinearLayout>
     </RelativeLayout>
@@ -122,29 +121,34 @@
             android:padding="4dp">
 
             <ImageButton
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackground"
                 android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_shuffle" />
 
             <ImageButton
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackground"
                 android:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_previous" />
 
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_weight="1"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:tint="@android:color/white"
-                app:srcCompat="@drawable/ic_pause" />
+                app:srcCompat="@drawable/ic_play"
+                android:clickable="true"
+                app:rippleColor="@android:color/white"
+                app:fabSize="normal"/>
 
             <ImageButton
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackground"
                 android:tint="@android:color/white"
@@ -152,7 +156,8 @@
 
 
             <ImageButton
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackground"
                 android:tint="@android:color/white"

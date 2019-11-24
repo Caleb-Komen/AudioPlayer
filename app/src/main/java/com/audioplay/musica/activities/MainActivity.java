@@ -22,20 +22,19 @@ import com.chibde.visualizer.CircleBarVisualizer;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private MusicAdapter musicAdapter;
-    private RelativeLayout layoutBottomSheet;
-    private BottomSheetBehavior bottomSheetBehavior;
     private CircleBarVisualizer circleBarVisualizer;
     private LinearLayout bottomSheetPeek;
-    private AppBarLayout appBarLayout;
     private MusicService musicService;
     private boolean isBound=false;
     Intent intent;
+    SlidingUpPanelLayout slidingUpPanelLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,36 +47,12 @@ public class MainActivity extends AppCompatActivity {
         //reference to layout view
         viewPager = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tab_layout);
-        layoutBottomSheet = findViewById(R.id.bottom_sheet);
         circleBarVisualizer = findViewById(R.id.visualizer);
         bottomSheetPeek = findViewById(R.id.bottom_sheet_peek);
-        appBarLayout = findViewById(R.id.app_bar);
+        slidingUpPanelLayout = findViewById(R.id.activity_main);
 
         circleBarVisualizer.setColor(ContextCompat.getColor(this, android.R.color.holo_blue_bright));
-        bottomSheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View view, int i) {
 
-                switch (i){
-
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        bottomSheetPeek.setVisibility(View.INVISIBLE);
-                        appBarLayout.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        bottomSheetPeek.setVisibility(View.VISIBLE);
-                        appBarLayout.setVisibility(View.VISIBLE);
-                        break;
-                }
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View view, float v) {
-            }
-        });
 
         musicAdapter = new MusicAdapter(getSupportFragmentManager());
 
@@ -118,5 +93,14 @@ public class MainActivity extends AppCompatActivity {
         this.stopService(intent);
         musicService = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED){
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
