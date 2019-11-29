@@ -47,6 +47,7 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
     private boolean isBound = false;
     private MusicService musicService;
     private Intent playbackIntent;
+    private SongAdapter songAdapter;
 
     public SongsFragment() {
         // Required empty public constructor
@@ -73,7 +74,7 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
 
         enableStrictMode();
 
-        SongAdapter songAdapter = new SongAdapter(getActivity(), songs);
+        songAdapter = new SongAdapter(getActivity(), songs);
         recyclerViewSongs.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerViewSongs.setHasFixedSize(true);
         recyclerViewSongs.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
@@ -176,11 +177,9 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
     }
 }

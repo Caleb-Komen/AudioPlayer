@@ -23,7 +23,9 @@ import com.audioplay.musica.adapters.ArtistAdapter;
 import com.audioplay.musica.models.Artist;
 import com.audioplay.musica.models.Song;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class ArtistsFragment extends Fragment {
         Uri artistsUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
         Cursor cursor = musicResolver.query(artistsUri, null, null, null, null);
 
+        Uri coverArtUri = Uri.parse("content://media/external/audio/albumart");
         if (cursor != null && cursor.moveToFirst()){
             do {
 
