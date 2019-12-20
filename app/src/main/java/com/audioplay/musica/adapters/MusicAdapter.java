@@ -8,11 +8,12 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.audioplay.musica.fragments.AlbumsFragment;
 import com.audioplay.musica.fragments.ArtistsFragment;
+import com.audioplay.musica.fragments.PlaylistsFragment;
 import com.audioplay.musica.fragments.SongsFragment;
 
 public class MusicAdapter extends FragmentStatePagerAdapter {
 
-    private String[] tabsTitle = {"Tracks", "Artists", "Albums"};
+    private String[] tabsTitle = {"Tracks", "Artists", "Albums", "Playlist"};
 
     public MusicAdapter(@NonNull FragmentManager fm){
         super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -30,6 +31,8 @@ public class MusicAdapter extends FragmentStatePagerAdapter {
                 return new ArtistsFragment();
             case 2:
                 return new AlbumsFragment();
+            case 3:
+                return new PlaylistsFragment();
         }
         return null;
     }
