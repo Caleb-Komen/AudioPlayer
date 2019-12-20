@@ -1,6 +1,8 @@
 package com.audioplay.musica.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,21 +16,41 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.audioplay.musica.R;
-import com.audioplay.musica.models.Song;
-import com.audioplay.musica.services.MusicService;
-
-import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private Context context;
-    private List<Song> songs;
+    private Cursor cursor;
     private OnMoreButtonClickListener onMoreButtonClickListener;
     private OnRecyclerListClickListener onRecyclerListClickListener;
+    private int songIdPostion;
+    private int titlePosition;
+    private int artistPosition;
+    private int albumPosition;
 
-    public SongAdapter(Context context, List<Song> songs) {
+    public void swapCursor(Cursor cursor){
+        this.cursor = cursor;
+
+        populateColumnPosition();
+    }
+
+    private void populateColumnPosition() {
+
+        if (cursor == null)
+            return;
+
+        songIdPostion = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
+        titlePosition = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+        artistPosition = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+        albumPosition = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+    }
+
+    public SongAdapter(Context context, Cursor cursor) {
         this.context = context;
-        this.songs = songs;
+        this.cursor = cursor;
+
+        populateColumnPosition();
+        notifyDataSetChanged();
     }
 
     public interface OnMoreButtonClickListener{
@@ -57,14 +79,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
 
-        Song song = songs.get(position);
-        holder.songTitle.setText(song.getTitle());
-        holder.songArtist.setText(song.getArtist());
+        cursor.moveToPosition(position);
+        String title = cursor.getString(titlePosition);
+        String artist = cursor.getString(artistPosition);
+
+        holder.songTitle.setText(title);
+        holder.songArtist.setText(artist);
     }
 
     @Override
     public int getItemCount() {
-        return songs.size();
+        return cursor == null ? 0 : cursor.getCount();
+
     }
 
     class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

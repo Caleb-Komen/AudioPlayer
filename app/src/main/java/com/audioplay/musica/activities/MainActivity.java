@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
 
         if (intent == null) {
             intent = new Intent(this, MusicService.class);
-            this.bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
+//            this.bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
             this.startService(intent);
         }
     }

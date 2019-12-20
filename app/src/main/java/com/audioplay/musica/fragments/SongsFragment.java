@@ -43,6 +43,7 @@ import java.util.List;
  */
 public class SongsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final int SONG_ID = 101;
     private List<Song> songs = new ArrayList<>();
     private boolean isBound = false;
     private MusicService musicService;
@@ -64,17 +65,22 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_songs, container, false);
         RecyclerView recyclerViewSongs = view.findViewById(R.id.songs_list);
 
-        getSongs();
+        //getSongs();
 
         enableStrictMode();
 
-        songAdapter = new SongAdapter(getActivity(), songs);
+        songAdapter = new SongAdapter(getActivity(), null);
         recyclerViewSongs.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerViewSongs.setHasFixedSize(true);
         recyclerViewSongs.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
@@ -113,6 +119,7 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
                 musicService.playSong();
             }
         });
+        getActivity().getSupportLoaderManager().initLoader(SONG_ID, null, this);
         return view;
     }
 
@@ -157,7 +164,7 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if (playbackIntent == null) {
             playbackIntent = new Intent(getActivity(), MusicService.class);
-            getActivity().bindService(playbackIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
+//            getActivity().bindService(playbackIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
             getActivity().startService(playbackIntent);
         }
     }
@@ -172,14 +179,36 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return null;
+        Loader<Cursor> cursorLoader = null;
+        if (id == SONG_ID){
+            Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            cursorLoader = new CursorLoader(getActivity(), musicUri,null, null, null, null);
+        }
+        return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+
+        if (data != null && data.moveToFirst()){
+            do {
+
+                long songId = data.getLong(data.getColumnIndex(MediaStore.Audio.Media._ID));
+                String title = data.getString(data.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String artist = data.getString(data.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                String album = data.getString(data.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+
+                songs.add(new Song(songId, title, artist, album));
+            } while (data.moveToNext());
+            songAdapter.swapCursor(data);
+        }
+
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if (loader.getId() == SONG_ID) {
+            songAdapter.swapCursor(null);
+        }
     }
 }
