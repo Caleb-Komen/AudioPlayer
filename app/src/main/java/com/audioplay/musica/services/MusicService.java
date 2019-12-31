@@ -12,6 +12,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.audioplay.musica.R;
 import com.audioplay.musica.activities.MainActivity;
@@ -21,8 +22,10 @@ import com.chibde.visualizer.CircleBarVisualizer;
 import java.io.IOException;
 import java.util.List;
 
+
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener {
+        MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener,
+        MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, AudioManager.OnAudioFocusChangeListener {
 
     public static final int NOTIFICATION_ID = 1;
     private MediaPlayer mediaPlayer;
@@ -31,6 +34,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private CircleBarVisualizer circleBarVisualizer;
     private String songTitle;
     private String songArtist;
+    private int resumePosition;
+    public static final String TAG = MusicService.class.getSimpleName();
 
     public MusicService() {
     }
@@ -38,9 +43,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void setSongsList(List<Song> songs){
         this.songs = songs;
     }
+
     public void setCircleBarVisualizer(CircleBarVisualizer circleBarVisualizer){
         this.circleBarVisualizer = circleBarVisualizer;
     }
+
+
 
     public class MusicBinder extends Binder{
         public MusicService getService(){
@@ -66,6 +74,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnErrorListener(this);
+        mediaPlayer.setOnSeekCompleteListener(this);
+        mediaPlayer.setOnInfoListener(this);
+        mediaPlayer.setOnBufferingUpdateListener(this);
     }
 
     @Override
@@ -80,7 +91,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         return false;
     }
 
-    public void playSong(){
+    public void playMedia(){
+
         mediaPlayer.reset();
         Song song = songs.get(songPosition);
         songTitle = song.getTitle();
@@ -94,20 +106,39 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             mediaPlayer.setDataSource(getApplicationContext(), songUri);
         } catch (IOException e) {
             e.printStackTrace();
+            stopSelf();
         }
 
         mediaPlayer.prepareAsync();
     }
 
-    public void pause(){
+    public void pauseMedia(){
+        //pause media if it's playing
         if (mediaPlayer.isPlaying()){
             mediaPlayer.pause();
+            resumePosition = mediaPlayer.getCurrentPosition();
         }
     }
 
-    public void continuePlaying(){
-        mediaPlayer.prepareAsync();
+    public void stopMedia(){
+        if (mediaPlayer == null) {
+            return;
+        }
+
+        //stop media if it's playing
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+        }
     }
+
+    public void resumeMedia(){
+
+        if (!mediaPlayer.isPlaying()){
+            mediaPlayer.seekTo(resumePosition);
+            mediaPlayer.start();
+        }
+    }
+
 
     public void setCurrentSong(int position){
         songPosition = position;
@@ -115,11 +146,13 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        playNext();
     }
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+
+        Log.d(TAG, "onError: an error occurred");
         return false;
     }
 
@@ -129,6 +162,26 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mediaPlayer.start();
         circleBarVisualizer.setPlayer(mediaPlayer.getAudioSessionId());
         displayPlayerNotification();
+    }
+
+    @Override
+    public void onSeekComplete(MediaPlayer mediaPlayer) {
+
+    }
+
+    @Override
+    public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+        return false;
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+
+    }
+
+    @Override
+    public void onAudioFocusChange(int i) {
+
     }
 
     private void displayPlayerNotification() {
@@ -177,7 +230,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (songPosition > songs.size()){
             songPosition = 0;
         }
-        playSong();
+        playMedia();
     }
 
     public void playPrevious(){
@@ -185,7 +238,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (songPosition < 0){
             songPosition = songs.size() - 1;
         }
-        playSong();
+        playMedia();
     }
 
     @Override

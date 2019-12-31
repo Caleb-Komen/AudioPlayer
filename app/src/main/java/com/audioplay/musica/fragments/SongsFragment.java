@@ -116,7 +116,7 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void onRecyclerListClick(int position) {
                 musicService.setCurrentSong(position);
-                musicService.playSong();
+                musicService.playMedia();
             }
         });
         getActivity().getSupportLoaderManager().initLoader(SONG_ID, null, this);
@@ -164,8 +164,8 @@ public class SongsFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if (playbackIntent == null) {
             playbackIntent = new Intent(getActivity(), MusicService.class);
-//            getActivity().bindService(playbackIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
-            getActivity().startService(playbackIntent);
+            getActivity().bindService(playbackIntent, serviceConnection, getActivity().BIND_AUTO_CREATE);
+            //getActivity().startService(playbackIntent);
         }
     }
 

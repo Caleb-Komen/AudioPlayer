@@ -1,6 +1,5 @@
 package com.audioplay.musica.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -11,18 +10,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.RelativeLayout;
 
 import com.audioplay.musica.R;
 import com.audioplay.musica.adapters.MusicAdapter;
 import com.audioplay.musica.services.MusicService;
 import com.chibde.visualizer.CircleBarVisualizer;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -37,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     private boolean isBound=false;
     Intent intent;
     SlidingUpPanelLayout slidingUpPanelLayout;
-    private MusicController musicController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,39 +77,16 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             }
         });
 
-        setUpMediaController();
 
     }
 
-    private void setUpMediaController() {
-        musicController = new MusicController(this);
-        musicController.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playPrevious();
-
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playNext();
-
-            }
-        });
-
-        musicController.setMediaPlayer(this);
-        musicController.setAnchorView(findViewById(R.id.layout_now_playing));
-        musicController.setEnabled(true);
-    }
 
     private void playNext() {
         musicService.playNext();
-        musicController.show(0);
     }
 
     private void playPrevious() {
         musicService.playPrevious();
-        musicController.show(0);
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -139,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
 
         if (intent == null) {
             intent = new Intent(this, MusicService.class);
-//            this.bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
+            this.bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
             this.startService(intent);
         }
     }
@@ -169,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     @Override
     public void pause() {
 
-        musicService.pause();
+        musicService.pauseMedia();
     }
 
     @Override
