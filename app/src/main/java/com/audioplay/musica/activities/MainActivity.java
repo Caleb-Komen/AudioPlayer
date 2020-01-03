@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         bottomSheetPeek = findViewById(R.id.bottom_sheet_peek);
         slidingUpPanelLayout = findViewById(R.id.activity_main);
 
+        findViewById(R.id.playing_media).setSelected(true);
+
         circleBarVisualizer.setColor(ContextCompat.getColor(this, android.R.color.holo_blue_bright));
 
 
