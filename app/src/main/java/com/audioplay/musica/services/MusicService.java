@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -36,6 +37,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private String songArtist;
     private int resumePosition;
     public static final String TAG = MusicService.class.getSimpleName();
+    private AudioManager audioManager;
 
     public MusicService() {
     }
@@ -57,6 +59,16 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     private final IBinder iBinder = new MusicBinder();
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        //request audio focus
+        if(!requestAudioFocus())
+            stopSelf();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -182,6 +194,59 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     @Override
     public void onAudioFocusChange(int i) {
 
+        switch (i){
+
+            case AudioManager.AUDIOFOCUS_GAIN:
+                if (mediaPlayer == null){
+                    initMusicPlayer();
+                }
+
+                if (!mediaPlayer.isPlaying()){
+                    mediaPlayer.start();
+                }
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS:
+
+                if (mediaPlayer.isPlaying()){
+                    mediaPlayer.stop();
+                }
+
+                mediaPlayer.release();
+                mediaPlayer = null;
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                if (mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                }
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                if (mediaPlayer.isPlaying()){
+                    mediaPlayer.setVolume(0.1f, 0.1f);
+                }
+                break;
+        }
+
+    }
+
+    private boolean requestAudioFocus(){
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int result = -1;
+        try {
+            result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean removeAudioFocus(){
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
     }
 
     private void displayPlayerNotification() {
@@ -245,5 +310,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onDestroy() {
         super.onDestroy();
         stopForeground(true);
+
+        if (mediaPlayer != null){
+            mediaPlayer.release();
+            stopMedia();
+        }
+
+        removeAudioFocus();
     }
 }
